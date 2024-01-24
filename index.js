@@ -60,19 +60,31 @@ async function run() {
     // filtering api format
     // http://localhost:5000/api/v1/services situation1
     // http://localhost:5000/api/v1/services?category=home-services situation2
-    
+    // sorting format
+    // http://localhost:5000/api/v1/services?sortFiled=price&sortOrder=asc
+    // sorting format
+    // http://localhost:5000/api/v1/services situation3
+    // http://localhost:5000/api/v1/services?sortField=price&sortOrder=desc situation4
     app.get('/api/v1/services' ,  async(req , res) => {
 
         let queryObj ={}
+        let sortObj = {
+          price: dsc
+        }
         const category = req.query.category;
+        const sortField = req.query.sortField;
+        const sortOrder = req.query.sortOrder;
         // const price = req.query.price;
         if(category){
           queryObj.category = category
         }
+        if(sortField && sortOrder){
+          sortObj[sortField] = sortOrder
+        }
         // if(price){
         //   queryObj.price = price
         // }
-        const cursor = servicesCollection.find(queryObj);
+        const cursor = servicesCollection.find(queryObj).sort(sortObj);
         const result = await cursor.toArray()
         res.send(result)
     })

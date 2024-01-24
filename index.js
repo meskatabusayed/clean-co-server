@@ -56,9 +56,23 @@ async function run() {
         next();
       })
     }
+    
+    // filtering api format
+    // http://localhost:5000/api/v1/services situation1
+    // http://localhost:5000/api/v1/services?category=home-services situation2
+    
+    app.get('/api/v1/services' ,  async(req , res) => {
 
-    app.get('/api/v1/services' ,  gateman , async(req , res) => {
-        const cursor = servicesCollection.find();
+        let queryObj ={}
+        const category = req.query.category;
+        // const price = req.query.price;
+        if(category){
+          queryObj.category = category
+        }
+        // if(price){
+        //   queryObj.price = price
+        // }
+        const cursor = servicesCollection.find(queryObj);
         const result = await cursor.toArray()
         res.send(result)
     })
